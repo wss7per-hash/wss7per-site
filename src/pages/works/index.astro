@@ -41,7 +41,7 @@ const categories = [
         {
           works.map((w) => (
             <div class="work-item" data-cat={w.data.category}>
-              <WorkCard work={w} wide={works.length === 1} />
+              <WorkCard work={w} wide={works.length === 1} reveal />
             </div>
           ))
         }

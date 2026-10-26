@@ -33,6 +33,9 @@ const navItems = [
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#08080b" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
   </head>
   <body>
     <header class="site-header">
@@ -77,5 +80,49 @@ const navItems = [
         </div>
       </div>
     </footer>
+
+    <script>
+      // 滚动渐入：同一父级内的 .reveal 依次错开
+      const els = document.querySelectorAll<HTMLElement>('.reveal');
+
+      els.forEach((el) => {
+        const siblings = Array.from(el.parentElement?.children ?? []).filter(
+          (c) => c.classList.contains('reveal')
+        );
+        const i = siblings.indexOf(el);
+        if (i > 0) el.style.transitionDelay = `${Math.min(i, 6) * 70}ms`;
+      });
+
+      if (!('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -6% 0px', threshold: 0.06 }
+        );
+        els.forEach((el) => io.observe(el));
+      }
+
+      // 卡片跟随鼠标的柔光
+      const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+      if (fine.matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document
+          .querySelectorAll<HTMLElement>('.work-card, .feature-card, .spotlight-grid')
+          .forEach((card) => {
+            card.addEventListener('pointermove', (e) => {
+              const r = card.getBoundingClientRect();
+              card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+              card.style.setProperty('--my', `${e.clientY - r.top}px`);
+            });
+          });
+      }
+    </script>
   </body>
 </html>

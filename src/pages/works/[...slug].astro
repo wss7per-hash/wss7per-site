@@ -45,7 +45,7 @@ const featureCards = d.features.map((f) => {
     <div class="wrap wrap-narrow">
       <a class="back" href="/works/">← 全部作品</a>
 
-      <div class="work-head">
+      <div class="work-head reveal">
         {d.icon && <img class="work-icon" src={d.icon} alt="" />}
         <div>
           <h1>{d.title}</h1>
@@ -53,9 +53,9 @@ const featureCards = d.features.map((f) => {
         </div>
       </div>
 
-      {d.summary && <p class="work-summary">{d.summary}</p>}
+      {d.summary && <p class="work-summary reveal">{d.summary}</p>}
 
-      <div class="meta-row">
+      <div class="meta-row reveal">
         <span class="meta-item">分类 <b>{d.category}</b></span>
         {d.version && <span class="meta-item">版本 <b>v{d.version}</b></span>}
         {
@@ -66,7 +66,7 @@ const featureCards = d.features.map((f) => {
         <span class="meta-item">更新 <b>{fmt(d.date)}</b></span>
       </div>
 
-      <div class="hero-actions">
+      <div class="hero-actions reveal">
         {
           d.download && (
             <a
@@ -116,7 +116,7 @@ const featureCards = d.features.map((f) => {
     !d.video && hasScreens && (
       <section class="phone-section">
         <div class="wrap">
-          <div class="phone-row">
+          <div class="phone-row reveal">
             {d.screens.map((src) => (
               <div class="phone">
                 <img src={src} alt={`${d.title} 界面截图`} loading="lazy" />
@@ -144,7 +144,7 @@ const featureCards = d.features.map((f) => {
     <div class="wrap wrap-narrow">
       {
         d.stats.length > 0 && (
-          <div class="stat-row">
+          <div class="stat-row reveal">
             {d.stats.map((s) => (
               <div class="stat">
                 <div class="stat-value">{s.value}</div>
@@ -157,7 +157,7 @@ const featureCards = d.features.map((f) => {
 
       {
         d.download && (
-          <div class="download-box">
+          <div class="download-box reveal">
             <div>
               <div class="label">下载</div>
               <h3 class="title">{d.download.label}</h3>
@@ -181,7 +181,7 @@ const featureCards = d.features.map((f) => {
             <h2 class="block-title" style="margin-top:0;">
               主要功能
             </h2>
-            <div class="feature-grid">
+            <div class="feature-grid reveal">
               {featureCards.map((f, i) => (
                 <div class="feature-card">
                   <span class="feature-idx">{String(i + 1).padStart(2, '0')}</span>
@@ -196,7 +196,7 @@ const featureCards = d.features.map((f) => {
 
       {
         toc.length > 1 && (
-          <nav class="toc-chips" aria-label="本页内容">
+          <nav class="toc-chips reveal" aria-label="本页内容">
             <span class="toc-label">本页</span>
             {toc.map((h) => (
               <a href={`#${h.slug}`}>{h.text}</a>
@@ -205,7 +205,7 @@ const featureCards = d.features.map((f) => {
         )
       }
 
-      <div class="prose">
+      <div class="prose reveal">
         <Content />
       </div>
 
@@ -221,7 +221,7 @@ const featureCards = d.features.map((f) => {
 
       {
         d.links.length > 0 && (
-          <div class="link-row">
+          <div class="link-row reveal">
             {d.links.map((l) => (
               <a class="btn btn-ghost" href={l.url} target="_blank" rel="noopener">
                 {l.label}
@@ -237,7 +237,7 @@ const featureCards = d.features.map((f) => {
     related.length > 0 && (
       <section class="section">
         <div class="wrap">
-          <div class="section-head">
+          <div class="section-head reveal">
             <h2>其他作品</h2>
             <a href="/works/">全部 →</a>
           </div>

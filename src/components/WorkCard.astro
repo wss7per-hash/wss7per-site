@@ -4,9 +4,10 @@ import type { CollectionEntry } from 'astro:content';
 interface Props {
   work: CollectionEntry<'works'>;
   wide?: boolean;
+  reveal?: boolean;
 }
 
-const { work, wide = false } = Astro.props;
+const { work, wide = false, reveal = false } = Astro.props;
 const { title, tagline, summary, category, cover, version, badge, screens, platforms, icon, accent } =
   work.data;
 
@@ -19,7 +20,7 @@ const meta = [version && `v${version}`, platforms.join(' / ')]
 ---
 
 <a
-  class="work-card"
+  class={reveal ? 'work-card reveal' : 'work-card'}
   href={`/works/${work.id}/`}
   style={accent ? `--work-accent:${accent}` : undefined}
 >

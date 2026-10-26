@@ -34,17 +34,17 @@ const host = (u: string) => {
 <Base>
   <section class="hero">
     <div class="wrap">
-      <span class="role">{SITE.role}</span>
-      <h1>{SITE.headline}<br /><em>{SITE.headlineAccent}</em></h1>
-      <p class="lead">{SITE.intro}</p>
-      <div class="hero-actions">
+      <span class="role reveal">{SITE.role}</span>
+      <h1 class="reveal">{SITE.headline}<br /><em>{SITE.headlineAccent}</em></h1>
+      <p class="lead reveal">{SITE.intro}</p>
+      <div class="hero-actions reveal">
         <a class="btn btn-primary" href="/works/">看看作品</a>
         <a class="btn btn-ghost" href="/about/">关于我</a>
       </div>
 
       {
         works.length > 0 && (
-          <div class="hero-tools">
+          <div class="hero-tools reveal">
             <span class="hero-tools-label">
               {works.length} 个作品，全部可以下载
             </span>
@@ -74,7 +74,7 @@ const host = (u: string) => {
     featured && (
       <section class="spotlight">
         <div class="wrap">
-          <div class="spotlight-grid">
+          <div class="spotlight-grid reveal">
             <div class="spotlight-copy">
               <span class="spotlight-eyebrow">
                 {featured.data.category}
@@ -93,7 +93,7 @@ const host = (u: string) => {
                 </ul>
               )}
 
-              <div class="hero-actions">
+              <div class="hero-actions reveal">
                 {featured.data.download && (
                   <a
                     class="btn btn-primary"
@@ -133,7 +133,7 @@ const host = (u: string) => {
     rest.length > 0 && (
       <section class="section">
         <div class="wrap">
-          <div class="section-head">
+          <div class="section-head reveal">
             <div>
               <span class="section-label">MORE WORK</span>
               <h2>更多作品</h2>
@@ -142,7 +142,7 @@ const host = (u: string) => {
           </div>
           <div class="work-grid">
             {rest.map((w) => (
-              <WorkCard work={w} />
+              <WorkCard work={w} reveal />
             ))}
           </div>
         </div>
@@ -154,7 +154,7 @@ const host = (u: string) => {
     bookmarks.length > 0 && (
       <section class="section">
         <div class="wrap">
-          <div class="section-head">
+          <div class="section-head reveal">
             <div>
               <span class="section-label">COLLECTION</span>
               <h2>收藏</h2>
@@ -163,7 +163,7 @@ const host = (u: string) => {
           </div>
           <div class="bookmark-grid">
             {bookmarks.map((b) => (
-              <a class="bookmark" href={b.data.url} target="_blank" rel="noopener">
+              <a class="bookmark reveal" href={b.data.url} target="_blank" rel="noopener">
                 <div class="cat">{b.data.category}</div>
                 <h3 class="name">{b.data.title}</h3>
                 <p class="desc">{b.data.description}</p>
@@ -180,7 +180,7 @@ const host = (u: string) => {
     posts.length > 0 && (
       <section class="section">
         <div class="wrap wrap-narrow">
-          <div class="section-head">
+          <div class="section-head reveal">
             <div>
               <span class="section-label">NOTES</span>
               <h2>最近写的</h2>
@@ -189,7 +189,7 @@ const host = (u: string) => {
           </div>
           <ul class="post-list">
             {posts.map((post) => (
-              <li class="post-item">
+              <li class="post-item reveal">
                 <a href={`/blog/${post.id}/`}>
                   <span class="post-date">{fmt(post.data.date)}</span>
                   <span>
