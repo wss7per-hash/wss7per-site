@@ -354,6 +354,10 @@ h3 {
   color: var(--accent);
 }
 
+.prose .links a {
+  text-decoration: none;
+}
+
 .more-link {
   display: inline-block;
   margin-top: 22px;
