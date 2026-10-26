@@ -37,7 +37,10 @@ const navItems = [
   <body>
     <header class="site-header">
       <div class="wrap">
-        <a href="/" class="brand"><span>{SITE.name}</span></a>
+        <a href="/" class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">{SITE.name}</span>
+        </a>
         <nav class="nav">
           {
             navItems.map((item) => (

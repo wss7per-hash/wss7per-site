@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { work, wide = false } = Astro.props;
-const { title, tagline, summary, category, cover, version, badge, screens, platforms, icon } =
+const { title, tagline, summary, category, cover, version, badge, screens, platforms, icon, accent } =
   work.data;
 
 const hasScreens = screens.length > 0;
@@ -18,7 +18,11 @@ const meta = [version && `v${version}`, platforms.join(' / ')]
   .join('  ·  ');
 ---
 
-<a class="work-card" href={`/works/${work.id}/`}>
+<a
+  class="work-card"
+  href={`/works/${work.id}/`}
+  style={accent ? `--work-accent:${accent}` : undefined}
+>
   <div
     class="work-media"
     data-cat={category}

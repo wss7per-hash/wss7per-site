@@ -41,6 +41,32 @@ const host = (u: string) => {
         <a class="btn btn-primary" href="/works/">看看作品</a>
         <a class="btn btn-ghost" href="/about/">关于我</a>
       </div>
+
+      {
+        works.length > 0 && (
+          <div class="hero-tools">
+            <span class="hero-tools-label">
+              {works.length} 个作品，全部可以下载
+            </span>
+            <div class="tool-strip">
+              {works.map((w) => (
+                <a
+                  class="tool-tile"
+                  href={`/works/${w.id}/`}
+                  title={w.data.title}
+                  aria-label={w.data.title}
+                >
+                  {w.data.icon ? (
+                    <img src={w.data.icon} alt="" loading="lazy" />
+                  ) : (
+                    <span>{w.data.title.trim().charAt(0)}</span>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
     </div>
   </section>
 
@@ -108,7 +134,10 @@ const host = (u: string) => {
       <section class="section">
         <div class="wrap">
           <div class="section-head">
-            <h2>更多作品</h2>
+            <div>
+              <span class="section-label">MORE WORK</span>
+              <h2>更多作品</h2>
+            </div>
             <a href="/works/">全部作品 →</a>
           </div>
           <div class="work-grid">
@@ -126,7 +155,10 @@ const host = (u: string) => {
       <section class="section">
         <div class="wrap">
           <div class="section-head">
-            <h2>收藏</h2>
+            <div>
+              <span class="section-label">COLLECTION</span>
+              <h2>收藏</h2>
+            </div>
             <a href="/collection/">全部 →</a>
           </div>
           <div class="bookmark-grid">
@@ -149,7 +181,10 @@ const host = (u: string) => {
       <section class="section">
         <div class="wrap wrap-narrow">
           <div class="section-head">
-            <h2>最近写的</h2>
+            <div>
+              <span class="section-label">NOTES</span>
+              <h2>最近写的</h2>
+            </div>
             <a href="/blog/">全部 →</a>
           </div>
           <ul class="post-list">
