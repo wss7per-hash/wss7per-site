@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import WorkCard from '../../components/WorkCard.astro';
+import WorkRow from '../../components/WorkRow.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../../site.config';
 
@@ -12,14 +12,19 @@ const categories = [
   '全部',
   ...Array.from(new Set(works.map((w) => w.data.category))),
 ];
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <Base title={`作品 · ${SITE.name}`} description="自己做的工具，全部可以下载。">
   <section class="page-head">
     <div class="wrap">
-      <span class="section-label">WORKS</span>
+      <div class="page-head-row">
+        <span class="mono">Works</span>
+        <span class="mono">{pad(works.length)} 个作品 / 全部免费</span>
+      </div>
       <h1>作品</h1>
-      <p>自己做的工具，都会放在这里。有问题直接找我。</p>
+      <p>自己做的工具，都会放在这里。全部免费，有问题直接找我。</p>
 
       {
         works.length > 1 && (
@@ -37,14 +42,8 @@ const categories = [
 
   <section class="section" style="padding-top:0;">
     <div class="wrap">
-      <div class={works.length === 1 ? 'work-grid work-grid--single' : 'work-grid'}>
-        {
-          works.map((w) => (
-            <div class="work-item" data-cat={w.data.category}>
-              <WorkCard work={w} wide={works.length === 1} reveal />
-            </div>
-          ))
-        }
+      <div class="rows">
+        {works.map((w, i) => <WorkRow work={w} index={i + 1} />)}
       </div>
 
       {works.length === 0 && <p class="empty">还没有作品。</p>}
@@ -54,7 +53,7 @@ const categories = [
 
 <script>
   const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
-  const items = document.querySelectorAll<HTMLElement>('.work-item');
+  const rows = document.querySelectorAll<HTMLElement>('.wrow');
 
   buttons.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -62,9 +61,9 @@ const categories = [
       btn.classList.add('is-active');
 
       const cat = btn.dataset.cat;
-      items.forEach((item) => {
-        const match = cat === '全部' || item.dataset.cat === cat;
-        item.style.display = match ? '' : 'none';
+      rows.forEach((row) => {
+        const match = cat === '全部' || row.dataset.cat === cat;
+        row.style.display = match ? '' : 'none';
       });
     });
   });

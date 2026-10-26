@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import WorkCard from '../components/WorkCard.astro';
+import WorkRow from '../components/WorkRow.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../site.config';
 
@@ -17,10 +17,12 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
 
 const bookmarks = (await getCollection('bookmarks'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+  .slice(0, 4);
+
+const pad = (n: number) => String(n).padStart(2, '0');
 
 const fmt = (d: Date) =>
-  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
 
 const host = (u: string) => {
   try {
@@ -29,101 +31,99 @@ const host = (u: string) => {
     return u;
   }
 };
+
+const platforms = Array.from(
+  new Set(works.flatMap((w) => w.data.platforms).map((p) => p.split(' ')[0]))
+).slice(0, 3);
+
+const screens = featured?.data.screens ?? [];
+const hasStrip = screens.length >= 2;
+const latest = works[0]?.data.date;
 ---
 
 <Base>
   <section class="hero">
-    <div class="wrap">
-      <span class="role reveal">{SITE.role}</span>
-      <h1 class="reveal">{SITE.headline}<br /><em>{SITE.headlineAccent}</em></h1>
-      <p class="lead reveal">{SITE.intro}</p>
-      <div class="hero-actions reveal">
-        <a class="btn btn-primary" href="/works/">看看作品</a>
-        <a class="btn btn-ghost" href="/about/">关于我</a>
+    <div class="wrap hero-grid">
+      <div class="hero-l">
+        <div class="mono">{SITE.role}</div>
+        <h1 class="reveal">
+          {SITE.headline}<br /><em>{SITE.headlineAccent}</em>
+        </h1>
+        <p class="lead reveal">{SITE.intro}</p>
+        <div class="hero-actions reveal">
+          <a class="btn btn-primary" href="/works/">
+            看看作品
+            <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M2.5 7h9M8 3.5L11.5 7 8 10.5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="square"
+              ></path>
+            </svg>
+          </a>
+          <a class="btn btn-ghost" href="/about/">关于我</a>
+        </div>
       </div>
 
-      {
-        works.length > 0 && (
-          <div class="hero-tools reveal">
-            <span class="hero-tools-label">
-              {works.length} 个作品，全部可以下载
-            </span>
-            <div class="tool-strip">
-              {works.map((w) => (
-                <a
-                  class="tool-tile"
-                  href={`/works/${w.id}/`}
-                  title={w.data.title}
-                  aria-label={w.data.title}
-                >
-                  {w.data.icon ? (
-                    <img src={w.data.icon} alt="" loading="lazy" />
-                  ) : (
-                    <span>{w.data.title.trim().charAt(0)}</span>
-                  )}
-                </a>
-              ))}
-            </div>
-          </div>
-        )
-      }
+      <aside class="hero-r reveal">
+        <dl class="spec">
+          <div><dt>作品</dt><dd>{pad(works.length)}</dd></div>
+          <div><dt>下载</dt><dd>全部免费</dd></div>
+          {platforms.length > 0 && (
+            <div><dt>平台</dt><dd>{platforms.join(' / ')}</dd></div>
+          )}
+          {latest && <div><dt>最近更新</dt><dd>{fmt(latest)}</dd></div>}
+        </dl>
+      </aside>
     </div>
   </section>
 
   {
     featured && (
-      <section class="spotlight">
+      <section style="padding-top:56px;">
         <div class="wrap">
-          <div class="spotlight-grid reveal">
-            <div class="spotlight-copy">
-              <span class="spotlight-eyebrow">
-                {featured.data.category}
-                {featured.data.badge && ` · ${featured.data.badge}`}
-              </span>
-              <h2>{featured.data.title}</h2>
-              <p class="spotlight-lead">
-                {featured.data.summary || featured.data.tagline}
-              </p>
-
-              {featured.data.highlights.length > 0 && (
-                <ul class="spotlight-points">
-                  {featured.data.highlights.map((h) => (
-                    <li>{h}</li>
-                  ))}
-                </ul>
-              )}
-
-              <div class="hero-actions reveal">
-                {featured.data.download && (
-                  <a
-                    class="btn btn-primary"
-                    href={featured.data.download.url}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    {featured.data.download.label}
-                  </a>
-                )}
-                <a class="btn btn-ghost" href={`/works/${featured.id}/`}>
-                  了解更多
-                </a>
-              </div>
-            </div>
-
-            <div class="spotlight-visual">
-              {featured.data.icon && (
-                <img class="spotlight-mascot" src={featured.data.icon} alt="" />
-              )}
-              {featured.data.screens.length > 0 && (
-                <div class="phone">
-                  <img
-                    src={featured.data.screens[0]}
-                    alt={`${featured.data.title} 界面截图`}
-                  />
-                </div>
-              )}
-            </div>
+          <div class="feathead reveal-rule">
+            <span class="idx">01</span>
+            <h2>
+              {featured.data.title}
+              {featured.data.tagline && <small>{featured.data.tagline}</small>}
+            </h2>
+            <span class="mono feathead-side">
+              {featured.data.platforms.join(' / ')}
+              {featured.data.version && ` · V${featured.data.version}`}
+            </span>
           </div>
+
+          {hasStrip ? (
+            <div class="strip">
+              {screens.slice(0, 3).map((src, i) => (
+                <a
+                  class="cell reveal-media"
+                  href={`/works/${featured.id}/`}
+                  aria-label={`${featured.data.title} 界面 ${i + 1}`}
+                >
+                  <div class="cell-shot">
+                    <img src={src} alt={`${featured.data.title} 界面截图`} />
+                  </div>
+                  <div class="cell-cap">
+                    <span class="mono">界面预览</span>
+                    <span class="mono">{pad(i + 1)}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            featured.data.cover && (
+              <a
+                class="work-cover reveal-media"
+                href={`/works/${featured.id}/`}
+                style="display:block;margin-top:26px;"
+              >
+                <img src={featured.data.cover} alt={featured.data.title} />
+              </a>
+            )
+          )}
         </div>
       </section>
     )
@@ -133,16 +133,17 @@ const host = (u: string) => {
     rest.length > 0 && (
       <section class="section">
         <div class="wrap">
-          <div class="section-head reveal">
+          <div class="section-head reveal-rule reveal">
             <div>
-              <span class="section-label">MORE WORK</span>
-              <h2>更多作品</h2>
+              <span class="section-label">Works</span>
+              <h2 style="margin-top:10px;">其他作品</h2>
             </div>
-            <a href="/works/">全部作品 →</a>
+            <a class="more" href="/works/">全部 {pad(works.length)} 个 →</a>
           </div>
-          <div class="work-grid">
-            {rest.map((w) => (
-              <WorkCard work={w} reveal />
+
+          <div class="rows">
+            {rest.map((w, i) => (
+              <WorkRow work={w} index={i + 2} />
             ))}
           </div>
         </div>
@@ -154,20 +155,28 @@ const host = (u: string) => {
     bookmarks.length > 0 && (
       <section class="section">
         <div class="wrap">
-          <div class="section-head reveal">
+          <div class="section-head reveal-rule reveal">
             <div>
-              <span class="section-label">COLLECTION</span>
-              <h2>收藏</h2>
+              <span class="section-label">Collection</span>
+              <h2 style="margin-top:10px;">收藏</h2>
             </div>
-            <a href="/collection/">全部 →</a>
+            <a class="more" href="/collection/">全部 →</a>
           </div>
-          <div class="bookmark-grid">
+
+          <div>
             {bookmarks.map((b) => (
-              <a class="bookmark reveal" href={b.data.url} target="_blank" rel="noopener">
-                <div class="cat">{b.data.category}</div>
-                <h3 class="name">{b.data.title}</h3>
-                <p class="desc">{b.data.description}</p>
-                <span class="url">{host(b.data.url)}</span>
+              <a
+                class="lrow reveal"
+                href={b.data.url}
+                target="_blank"
+                rel="noopener"
+              >
+                <span class="lrow-cat">{b.data.category}</span>
+                <span>
+                  <span class="lrow-title">{b.data.title}</span>
+                  <span class="lrow-desc">{b.data.description}</span>
+                </span>
+                <span class="lrow-side">{host(b.data.url)}</span>
               </a>
             ))}
           </div>
@@ -179,29 +188,29 @@ const host = (u: string) => {
   {
     posts.length > 0 && (
       <section class="section">
-        <div class="wrap wrap-narrow">
-          <div class="section-head reveal">
+        <div class="wrap">
+          <div class="section-head reveal-rule reveal">
             <div>
-              <span class="section-label">NOTES</span>
-              <h2>最近写的</h2>
+              <span class="section-label">Notes</span>
+              <h2 style="margin-top:10px;">最近写的</h2>
             </div>
-            <a href="/blog/">全部 →</a>
+            <a class="more" href="/blog/">全部 →</a>
           </div>
-          <ul class="post-list">
+
+          <div>
             {posts.map((post) => (
-              <li class="post-item reveal">
-                <a href={`/blog/${post.id}/`}>
-                  <span class="post-date">{fmt(post.data.date)}</span>
-                  <span>
-                    <span class="post-title">{post.data.title}</span>
-                    {post.data.description && (
-                      <span class="post-desc">{post.data.description}</span>
-                    )}
-                  </span>
-                </a>
-              </li>
+              <a class="lrow reveal" href={`/blog/${post.id}/`}>
+                <span class="lrow-cat">{fmt(post.data.date)}</span>
+                <span>
+                  <span class="lrow-title">{post.data.title}</span>
+                  {post.data.description && (
+                    <span class="lrow-desc">{post.data.description}</span>
+                  )}
+                </span>
+                <span class="lrow-side">阅读 →</span>
+              </a>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
     )

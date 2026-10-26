@@ -3,43 +3,37 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   work: CollectionEntry<'works'>;
-  wide?: boolean;
   reveal?: boolean;
 }
 
-const { work, wide = false, reveal = false } = Astro.props;
-const { title, tagline, summary, category, cover, version, badge, screens, platforms, icon, accent } =
+const { work, reveal = false } = Astro.props;
+const { title, tagline, category, cover, version, screens, icon, badge } =
   work.data;
 
 const hasScreens = screens.length > 0;
-const strip = screens.slice(0, 3);
-const hasIconTile = !hasScreens && !cover && Boolean(icon);
-const meta = [version && `v${version}`, platforms.join(' / ')]
-  .filter(Boolean)
-  .join('  ·  ');
+const hasIcon = Boolean(icon);
+const meta = [version && `v${version}`].filter(Boolean).join('');
 ---
 
 <a
   class={reveal ? 'work-card reveal' : 'work-card'}
   href={`/works/${work.id}/`}
-  style={accent ? `--work-accent:${accent}` : undefined}
 >
   <div
     class="work-media"
-    data-cat={category}
     data-shot={hasScreens ? 'app' : undefined}
-    data-icon={hasIconTile ? 'true' : undefined}
+    data-icon={!hasScreens && !cover && hasIcon ? 'true' : undefined}
   >
     {
       hasScreens ? (
         <div class="screens-strip">
-          {strip.map((src) => (
+          {screens.slice(0, 3).map((src) => (
             <img src={src} alt="" loading="lazy" />
           ))}
         </div>
       ) : cover ? (
-        <img src={cover} alt={title} loading="lazy" onerror="this.remove()" />
-      ) : hasIconTile ? (
+        <img src={cover} alt={title} loading="lazy" />
+      ) : hasIcon ? (
         <img class="icon-tile" src={icon} alt={title} loading="lazy" />
       ) : (
         <div class="placeholder">
@@ -47,23 +41,15 @@ const meta = [version && `v${version}`, platforms.join(' / ')]
         </div>
       )
     }
-    {
-      !hasScreens && !hasIconTile && (badge || version) && (
-        <span class="work-badge">{badge || `v${version}`}</span>
-      )
-    }
+    {badge && <span class="work-badge">{badge}</span>}
   </div>
+
   <div class="work-body">
     <div class="work-cat">
       {category}
-      {(hasScreens || hasIconTile) && badge && (
-        <span class="work-cat-sep"> · {badge}</span>
-      )}
+      {meta && <span class="work-cat-sep"> / {meta}</span>}
     </div>
     <h3 class="work-title">{title}</h3>
     {tagline && <p class="work-tagline">{tagline}</p>}
-    {wide && summary && <p class="work-summary-sm">{summary}</p>}
-    {wide && meta && <div class="work-meta">{meta}</div>}
-    {wide && <span class="work-more">查看详情 →</span>}
   </div>
 </a>

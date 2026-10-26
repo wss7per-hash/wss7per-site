@@ -7,38 +7,41 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
+const pad = (n: number) => String(n).padStart(2, '0');
 const fmt = (d: Date) =>
-  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
 ---
 
 <Base title={`文章 · ${SITE.name}`}>
   <section class="page-head">
-    <div class="wrap wrap-narrow">
-      <span class="section-label">NOTES</span>
+    <div class="wrap">
+      <div class="page-head-row">
+        <span class="mono">Notes</span>
+        <span class="mono">{pad(posts.length)} 篇</span>
+      </div>
       <h1>文章</h1>
-      <p>共 {posts.length} 篇</p>
+      <p>做一些东西时的记录，踩过的坑，以及为什么这么设计。</p>
     </div>
   </section>
 
   <section class="section" style="padding-top:0;">
-    <div class="wrap wrap-narrow">
-      <ul class="post-list">
+    <div class="wrap">
+      <div class="lrows">
         {
           posts.map((post) => (
-            <li class="post-item">
-              <a href={`/blog/${post.id}/`}>
-                <span class="post-date">{fmt(post.data.date)}</span>
-                <span>
-                  <span class="post-title">{post.data.title}</span>
-                  {post.data.description && (
-                    <span class="post-desc">{post.data.description}</span>
-                  )}
-                </span>
-              </a>
-            </li>
+            <a class="lrow reveal" href={`/blog/${post.id}/`}>
+              <span class="lrow-cat">{fmt(post.data.date)}</span>
+              <span>
+                <span class="lrow-title">{post.data.title}</span>
+                {post.data.description && (
+                  <span class="lrow-desc">{post.data.description}</span>
+                )}
+              </span>
+              <span class="lrow-side">阅读 →</span>
+            </a>
           ))
         }
-      </ul>
+      </div>
 
       {posts.length === 0 && <p class="empty">还没有文章。</p>}
     </div>

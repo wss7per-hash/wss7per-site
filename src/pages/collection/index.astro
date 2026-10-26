@@ -7,6 +7,8 @@ const items = (await getCollection('bookmarks')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
 const host = (u: string) => {
   try {
     return new URL(u).hostname.replace(/^www\./, '');
@@ -19,7 +21,10 @@ const host = (u: string) => {
 <Base title={`收藏 · ${SITE.name}`} description="一些用得上、或者只是觉得有意思的东西。">
   <section class="page-head">
     <div class="wrap">
-      <span class="section-label">COLLECTION</span>
+      <div class="page-head-row">
+        <span class="mono">Collection</span>
+        <span class="mono">{pad(items.length)} 条 / 全部外链</span>
+      </div>
       <h1>收藏</h1>
       <p>一些用得上、或者只是觉得有意思的东西。点开就是原站。</p>
     </div>
@@ -27,14 +32,16 @@ const host = (u: string) => {
 
   <section class="section" style="padding-top:0;">
     <div class="wrap">
-      <div class="bookmark-grid">
+      <div class="lrows">
         {
           items.map((b) => (
-            <a class="bookmark" href={b.data.url} target="_blank" rel="noopener">
-              <div class="cat">{b.data.category}</div>
-              <h3 class="name">{b.data.title}</h3>
-              <p class="desc">{b.data.description}</p>
-              <span class="url">{host(b.data.url)}</span>
+            <a class="lrow reveal" href={b.data.url} target="_blank" rel="noopener">
+              <span class="lrow-cat">{b.data.category}</span>
+              <span>
+                <span class="lrow-title">{b.data.title}</span>
+                <span class="lrow-desc">{b.data.description}</span>
+              </span>
+              <span class="lrow-side">{host(b.data.url)}</span>
             </a>
           ))
         }

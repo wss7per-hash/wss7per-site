@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
 import { SITE } from '../site.config';
 
 interface Props {
@@ -19,6 +20,12 @@ const navItems = [
   { href: '/blog/', label: '文章' },
   { href: '/about/', label: '关于' },
 ];
+
+const github = SITE.social.find((s) => /github/i.test(s.label));
+const mail = SITE.social.find((s) => s.url.startsWith('mailto:'));
+
+const works = await getCollection('works', ({ data }) => !data.draft);
+const count = String(works.length).padStart(2, '0');
 ---
 
 <!doctype html>
@@ -31,20 +38,32 @@ const navItems = [
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#08080b" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/fonts/inter-tight-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
   </head>
   <body>
-    <header class="site-header">
-      <div class="wrap">
-        <a href="/" class="brand">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span class="brand-name">{SITE.name}</span>
-        </a>
-        <nav class="nav">
+    <div class="topbar">
+      <div class="wrap topbar-inner">
+        <span class="mono">Independent Software — {SITE.name}</span>
+        <span class="mono">{count} Works / Free Download</span>
+      </div>
+    </div>
+
+    <header class="site-header" id="site-header">
+      <div class="wrap header-inner">
+        <a href="/" class="brand">{SITE.name}</a>
+
+        <nav class="nav" aria-label="主导航">
           {
             navItems.map((item) => (
               <a
@@ -55,6 +74,29 @@ const navItems = [
               </a>
             ))
           }
+          {
+            github && (
+              <>
+                <span class="nav-sep" aria-hidden="true" />
+                <a
+                  class="nav-ext"
+                  href={github.url}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  GitHub
+                  <svg viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <path
+                      d="M3 9L9 3M9 3H4.5M9 3V7.5"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="square"
+                    />
+                  </svg>
+                </a>
+              </>
+            )
+          }
         </nav>
       </div>
     </header>
@@ -64,36 +106,69 @@ const navItems = [
     </main>
 
     <footer class="site-footer">
-      <div class="wrap footer-inner">
-        <p style="margin:0;">
-          © {year} {SITE.name}{SITE.icp ? ` · ${SITE.icp}` : ''}
-        </p>
-        <div class="footer-links">
+      <div class="wrap">
+        <div class="footer-cta">
+          <div>
+            <span class="mono">Contact</span>
+            <h2>有想法，或者遇到了问题？</h2>
+          </div>
           {
-            SITE.social.map((s) => (
-              <a href={s.url} target="_blank" rel="noopener">
-                {s.label}
+            mail && (
+              <a class="footer-mail" href={mail.url}>
+                {mail.url.replace('mailto:', '')}
+                <svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path
+                    d="M3 9L9 3M9 3H4.5M9 3V7.5"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="square"
+                  />
+                </svg>
               </a>
-            ))
+            )
           }
-          <a href="/admin/" class="footer-admin">管理后台</a>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© {year} {SITE.name}{SITE.icp ? ` · ${SITE.icp}` : ''}</p>
+          <div class="footer-links">
+            {
+              SITE.social.map((s) => (
+                <a href={s.url} target="_blank" rel="noopener">
+                  {s.label}
+                </a>
+              ))
+            }
+            <a href="/admin/">管理后台</a>
+          </div>
         </div>
       </div>
     </footer>
 
     <script>
-      // 滚动渐入：同一父级内的 .reveal 依次错开
-      const els = document.querySelectorAll<HTMLElement>('.reveal');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* 顶栏：滚动后出现下边线 */
+      const header = document.getElementById('site-header');
+      const onScroll = () => {
+        header?.classList.toggle('is-stuck', window.scrollY > 8);
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      /* 滚动进场：同级元素依次错开 */
+      const SEL = '.reveal, .reveal-media, .reveal-rule';
+      const els = Array.from(document.querySelectorAll<HTMLElement>(SEL));
 
       els.forEach((el) => {
-        const siblings = Array.from(el.parentElement?.children ?? []).filter(
-          (c) => c.classList.contains('reveal')
+        const siblings = Array.from(el.parentElement?.children ?? []).filter((c) =>
+          c.matches(SEL)
         );
         const i = siblings.indexOf(el);
-        if (i > 0) el.style.transitionDelay = `${Math.min(i, 6) * 70}ms`;
+        if (i > 0) el.style.transitionDelay = `${Math.min(i, 4) * 90}ms`;
       });
 
-      if (!('IntersectionObserver' in window)) {
+      if (!('IntersectionObserver' in window) || reduce) {
         els.forEach((el) => el.classList.add('is-in'));
       } else {
         const io = new IntersectionObserver(
@@ -105,23 +180,11 @@ const navItems = [
               }
             }
           },
-          { rootMargin: '0px 0px -6% 0px', threshold: 0.06 }
+          // threshold 0：.reveal-media 初始被 clip-path 完全裁掉，
+          // 可视面积恒为 0，用非零阈值会永远不触发
+          { rootMargin: '0px 0px -8% 0px', threshold: 0 }
         );
         els.forEach((el) => io.observe(el));
-      }
-
-      // 卡片跟随鼠标的柔光
-      const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-      if (fine.matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document
-          .querySelectorAll<HTMLElement>('.work-card, .feature-card, .spotlight-grid')
-          .forEach((card) => {
-            card.addEventListener('pointermove', (e) => {
-              const r = card.getBoundingClientRect();
-              card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-              card.style.setProperty('--my', `${e.clientY - r.top}px`);
-            });
-          });
       }
     </script>
   </body>

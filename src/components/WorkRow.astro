@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  work: CollectionEntry<'works'>;
+  index: number;
+}
+
+const { work, index } = Astro.props;
+const d = work.data;
+
+const hasCover = Boolean(d.cover);
+const hasScreens = d.screens.length > 0;
+const hasIcon = Boolean(d.icon);
+
+const thumb = hasCover ? d.cover : hasScreens ? d.screens[0] : '';
+const letter = d.title.trim().charAt(0);
+
+const fmt = (x: Date) =>
+  `${x.getFullYear()}.${String(x.getMonth() + 1).padStart(2, '0')}.${String(
+    x.getDate()
+  ).padStart(2, '0')}`;
+---
+
+<a class="wrow" href={`/works/${work.id}/`} data-cat={d.category}>
+  <span class="wrow-idx">{String(index).padStart(2, '0')}</span>
+
+  <span class="wrow-thumb">
+    {
+      thumb ? (
+        <img src={thumb} alt="" loading="lazy" />
+      ) : hasIcon ? (
+        <img class="is-icon" src={d.icon} alt="" loading="lazy" />
+      ) : (
+        <span class="letter">{letter}</span>
+      )
+    }
+  </span>
+
+  <span class="wrow-main">
+    <span class="wrow-title">{d.title}</span>
+    <span class="wrow-desc">{d.tagline || d.summary}</span>
+  </span>
+
+  <span class="wrow-meta">{d.category}</span>
+  <span class="wrow-date">{fmt(d.date)}</span>
+  <span class="wrow-arrow" aria-hidden="true">→</span>
+</a>

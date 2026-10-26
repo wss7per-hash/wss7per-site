@@ -1,31 +1,72 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
 import { SITE } from '../site.config';
 
 const paragraphs = SITE.about.split(/\n{2,}/).filter(Boolean);
+const [lead, ...rest] = paragraphs;
+
+const works = (await getCollection('works', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <Base title={`关于 · ${SITE.name}`} description={SITE.intro}>
   <section class="page-head">
-    <div class="wrap wrap-narrow">
-      <span class="section-label">ABOUT</span>
-      <h1>关于</h1>
+    <div class="wrap">
+      <div class="page-head-row">
+        <span class="mono">About</span>
+        <span class="mono">{SITE.role}</span>
+      </div>
+      <h1 class="about-lead">{lead}</h1>
     </div>
   </section>
 
   <section class="section" style="padding-top:0;">
-    <div class="wrap wrap-narrow">
-      <div class="prose">
-        {paragraphs.map((p) => <p>{p}</p>)}
+    <div class="wrap">
+      <div class="doc-grid">
+        <div>
+          <span class="section-label">自述</span>
+        </div>
+        <div class="prose reveal">
+          {rest.map((p) => <p>{p}</p>)}
+        </div>
       </div>
 
-      <div style="margin-top:64px;">
-        <h2 class="block-title" style="margin-top:0;">找到我</h2>
-        <div class="hero-actions">
+      {
+        works.length > 0 && (
+          <div class="about-block reveal-rule reveal">
+            <h2 class="block-title">做过的东西</h2>
+            <div class="about-list">
+              {works.map((w, i) => (
+                <a class="about-item" href={`/works/${w.id}/`}>
+                  <span class="idx">{pad(i + 1)}</span>
+                  <span class="name">{w.data.title}</span>
+                  <span class="cat">{w.data.category}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+
+      <div class="about-block reveal-rule reveal">
+        <h2 class="block-title">找到我</h2>
+        <div class="hero-actions" style="margin-top:0;">
           {
             SITE.social.map((s) => (
               <a class="btn btn-ghost" href={s.url} target="_blank" rel="noopener">
                 {s.label}
+                <svg viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path
+                    d="M3 9L9 3M9 3H4.5M9 3V7.5"
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    stroke-linecap="square"
+                  />
+                </svg>
               </a>
             ))
           }

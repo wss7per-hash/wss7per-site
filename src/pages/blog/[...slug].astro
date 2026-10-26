@@ -22,15 +22,16 @@ const fmt = (d: Date) =>
   <article class="article">
     <div class="wrap wrap-narrow">
       <header class="article-head">
+        <div class="mono">Note / {fmt(post.data.date)}</div>
         <h1>{post.data.title}</h1>
-        <div class="article-meta">{fmt(post.data.date)}</div>
+        {post.data.description && <p class="article-desc">{post.data.description}</p>}
       </header>
 
-      <div class="prose">
+      <div class="prose reveal">
         <Content />
       </div>
 
-      <a class="back" href="/blog/" style="margin-top:64px;">← 返回文章列表</a>
+      <a class="back" href="/blog/" style="margin-top:56px;">返回文章列表</a>
     </div>
   </article>
 </Base>
