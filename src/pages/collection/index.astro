@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../site.config';
+
+const items = (await getCollection('bookmarks')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const host = (u: string) => {
+  try {
+    return new URL(u).hostname.replace(/^www\./, '');
+  } catch {
+    return u;
+  }
+};
+---
+
+<Base title={`收藏 · ${SITE.name}`} description="一些用得上、或者只是觉得有意思的东西。">
+  <section class="page-head">
+    <div class="wrap">
+      <h1>收藏</h1>
+      <p>一些用得上、或者只是觉得有意思的东西。点开就是原站。</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="wrap">
+      <div class="bookmark-grid">
+        {
+          items.map((b) => (
+            <a class="bookmark" href={b.data.url} target="_blank" rel="noopener">
+              <div class="cat">{b.data.category}</div>
+              <h3 class="name">{b.data.title}</h3>
+              <p class="desc">{b.data.description}</p>
+              <span class="url">{host(b.data.url)}</span>
+            </a>
+          ))
+        }
+      </div>
+
+      {items.length === 0 && <p class="empty">还没有收藏。</p>}
+    </div>
+  </section>
+</Base>

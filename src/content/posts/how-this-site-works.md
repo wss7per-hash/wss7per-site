@@ -1,5 +1,6 @@
 ---
 title: 这个网站是怎么搭的
+permalink: how-this-site-works
 date: 2026-10-20
 description: 零成本、可后台编辑、域名随时能换——整套方案的说明。
 ---

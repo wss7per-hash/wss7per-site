@@ -5,17 +5,31 @@ import { SITE } from '../site.config';
 const paragraphs = SITE.about.split(/\n{2,}/).filter(Boolean);
 ---
 
-<Base title={`关于 · ${SITE.name}`}>
+<Base title={`关于 · ${SITE.name}`} description={SITE.intro}>
   <section class="page-head">
-    <h1>关于</h1>
+    <div class="wrap wrap-narrow">
+      <h1>关于</h1>
+    </div>
   </section>
 
-  <div class="prose">
-    {paragraphs.map((p) => <p>{p}</p>)}
-    <hr />
-    <p style="font-size:15px;color:var(--ink-soft);">找到我</p>
-    <div class="links">
-      {SITE.social.map((s) => <a href={s.url}>{s.label}</a>)}
+  <section class="section" style="padding-top:0;">
+    <div class="wrap wrap-narrow">
+      <div class="prose">
+        {paragraphs.map((p) => <p>{p}</p>)}
+      </div>
+
+      <div style="margin-top:64px;">
+        <h2 class="block-title" style="margin-top:0;">找到我</h2>
+        <div class="hero-actions">
+          {
+            SITE.social.map((s) => (
+              <a class="btn btn-ghost" href={s.url} target="_blank" rel="noopener">
+                {s.label}
+              </a>
+            ))
+          }
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 </Base>

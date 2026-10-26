@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  work: CollectionEntry<'works'>;
+}
+
+const { work } = Astro.props;
+const { title, tagline, category, cover, version } = work.data;
+---
+
+<a class="work-card" href={`/works/${work.id}/`}>
+  <div class="work-media" data-cat={category}>
+    <div class="placeholder">
+      <span>{title.trim().charAt(0)}</span>
+    </div>
+    {
+      cover && (
+        <img src={cover} alt={title} loading="lazy" onerror="this.remove()" />
+      )
+    }
+    {version && <span class="work-badge">v{version}</span>}
+  </div>
+  <div class="work-body">
+    <div class="work-cat">{category}</div>
+    <h3 class="work-title">{title}</h3>
+    {tagline && <p class="work-tagline">{tagline}</p>}
+  </div>
+</a>

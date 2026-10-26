@@ -8,6 +8,74 @@ media_folder: "public/uploads"
 public_folder: "/uploads"
 
 collections:
+  - name: works
+    label: 作品
+    label_singular: 作品
+    folder: src/content/works
+    create: true
+    delete: true
+    slug: "{{fields.permalink}}"
+    preview_path: "works/{{fields.permalink}}"
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 网址标识, name: permalink, widget: string, hint: 英文或拼音，决定网址，例如 autolod }
+      - { label: 一句话卖点, name: tagline, widget: string, hint: 显示在封面下方，一行字说清它是干嘛的 }
+      - { label: 分类, name: category, widget: select, options: [APP, UE5 插件, AE 插件, 其他] }
+      - { label: 封面图, name: cover, widget: image, required: false, hint: 建议 1600×1000，横图 }
+      - { label: 演示视频, name: video, widget: string, required: false, hint: 填 mp4 直链，或 B 站 / YouTube 的嵌入地址 }
+      - label: 截图集
+        name: gallery
+        widget: list
+        required: false
+        field: { label: 图片, name: image, widget: image }
+      - { label: 版本号, name: version, widget: string, required: false, hint: 只填数字，例如 2.1.0 }
+      - label: 支持平台
+        name: platforms
+        widget: list
+        required: false
+        default: [Windows]
+        field: { label: 平台, name: platform, widget: string }
+      - { label: 更新日期, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, format: YYYY-MM-DD }
+      - { label: 首页推荐, name: featured, widget: boolean, default: false, required: false }
+      - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
+      - label: 下载
+        name: download
+        widget: object
+        required: false
+        fields:
+          - { label: 下载说明, name: label, widget: string, default: Windows 安装包 }
+          - { label: 下载地址, name: url, widget: string, hint: 网盘链接、GitHub Releases，或直接填站内文件路径 }
+          - { label: 备注, name: note, widget: string, required: false, hint: 例如 v2.1.0 · 18.4 MB · 免费 }
+      - label: 其他链接
+        name: links
+        widget: list
+        required: false
+        fields:
+          - { label: 名称, name: label, widget: string }
+          - { label: 地址, name: url, widget: string }
+      - label: 功能列表
+        name: features
+        widget: list
+        required: false
+        field: { label: 功能, name: feature, widget: string }
+      - { label: 详细介绍, name: body, widget: markdown }
+
+  - name: bookmarks
+    label: 收藏
+    label_singular: 收藏
+    folder: src/content/bookmarks
+    create: true
+    delete: true
+    slug: "{{fields.permalink}}"
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 网址标识, name: permalink, widget: string, hint: 英文或拼音 }
+      - { label: 链接地址, name: url, widget: string }
+      - { label: 简介, name: description, widget: text, hint: 一两句话说明它好在哪里 }
+      - { label: 分类, name: category, widget: string, default: 资源 }
+      - { label: 添加日期, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, format: YYYY-MM-DD }
+      - { label: 备注, name: body, widget: markdown, required: false }
+
   - name: posts
     label: 文章
     label_singular: 文章
@@ -17,30 +85,9 @@ collections:
     slug: "{{fields.permalink}}"
     preview_path: "blog/{{fields.permalink}}"
     fields:
-      - label: 标题
-        name: title
-        widget: string
-      - label: 网址标识
-        name: permalink
-        widget: string
-        hint: 用英文或拼音，决定文章网址，例如 my-first-post
-      - label: 日期
-        name: date
-        widget: datetime
-        date_format: YYYY-MM-DD
-        time_format: false
-        format: YYYY-MM-DD
-      - label: 摘要
-        name: description
-        widget: string
-        required: false
-        hint: 一句话简介，会显示在文章列表里
-      - label: 草稿
-        name: draft
-        widget: boolean
-        default: false
-        required: false
-        hint: 勾选后不会发布到网站上
-      - label: 正文
-        name: body
-        widget: markdown
+      - { label: 标题, name: title, widget: string }
+      - { label: 网址标识, name: permalink, widget: string, hint: 英文或拼音，决定文章网址 }
+      - { label: 日期, name: date, widget: datetime, date_format: YYYY-MM-DD, time_format: false, format: YYYY-MM-DD }
+      - { label: 摘要, name: description, widget: string, required: false }
+      - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
+      - { label: 正文, name: body, widget: markdown }

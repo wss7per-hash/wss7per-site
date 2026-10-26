@@ -1,5 +1,6 @@
 ---
 title: 最近在读的几本书
+permalink: reading-notes
 date: 2026-10-12
 description: 三本翻了一半的书，和一点随想。
 ---

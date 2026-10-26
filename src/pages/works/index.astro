@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../site.config';
+
+const works = (await getCollection('works', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const categories = [
+  '全部',
+  ...Array.from(new Set(works.map((w) => w.data.category))),
+];
+---
+
+<Base title={`作品 · ${SITE.name}`} description="自己做的工具，全部可以下载。">
+  <section class="page-head">
+    <div class="wrap">
+      <h1>作品</h1>
+      <p>自己做的工具，都会放在这里。有问题直接找我。</p>
+
+      <div class="filters">
+        {
+          categories.map((c, i) => (
+            <button class={i === 0 ? 'filter is-active' : 'filter'} data-cat={c}>
+              {c}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="wrap">
+      <div class="work-grid">
+        {
+          works.map((w) => (
+            <div class="work-item" data-cat={w.data.category}>
+              <WorkCard work={w} />
+            </div>
+          ))
+        }
+      </div>
+
+      {works.length === 0 && <p class="empty">还没有作品。</p>}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+  const items = document.querySelectorAll<HTMLElement>('.work-item');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+
+      const cat = btn.dataset.cat;
+      items.forEach((item) => {
+        const match = cat === '全部' || item.dataset.cat === cat;
+        item.style.display = match ? '' : 'none';
+      });
+    });
+  });
+</script>

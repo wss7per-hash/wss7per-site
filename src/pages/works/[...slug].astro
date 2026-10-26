@@ -1,0 +1,164 @@
+---
+import Base from '../../layouts/Base.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getCollection, render } from 'astro:content';
+import { SITE } from '../../site.config';
+
+export async function getStaticPaths() {
+  const works = await getCollection('works', ({ data }) => !data.draft);
+  return works.map((work) => ({
+    params: { slug: work.id },
+    props: { work },
+  }));
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work);
+const d = work.data;
+
+const all = await getCollection('works', ({ data }) => !data.draft);
+const related = all.filter((w) => w.id !== work.id).slice(0, 3);
+
+const fmt = (x: Date) =>
+  `${x.getFullYear()}.${String(x.getMonth() + 1).padStart(2, '0')}.${String(x.getDate()).padStart(2, '0')}`;
+
+const isVideoFile = /\.(mp4|webm|ogg)$/i.test(d.video);
+---
+
+<Base title={`${d.title} · ${SITE.name}`} description={d.tagline || d.title}>
+  <section class="work-hero">
+    <div class="wrap wrap-narrow">
+      <a class="back" href="/works/">← 全部作品</a>
+      <h1>{d.title}</h1>
+      {d.tagline && <p class="tagline">{d.tagline}</p>}
+
+      <div class="meta-row">
+        <span class="meta-item">分类 <b>{d.category}</b></span>
+        {d.version && <span class="meta-item">版本 <b>v{d.version}</b></span>}
+        {
+          d.platforms.length > 0 && (
+            <span class="meta-item">平台 <b>{d.platforms.join(' / ')}</b></span>
+          )
+        }
+        <span class="meta-item">更新 <b>{fmt(d.date)}</b></span>
+      </div>
+    </div>
+  </section>
+
+  {
+    d.video && (
+      <section style="margin-top:44px;">
+        <div class="wrap">
+          <div class="video-wrap">
+            {isVideoFile ? (
+              <video src={d.video} controls playsinline poster={d.cover || undefined} />
+            ) : (
+              <iframe
+                src={d.video}
+                title={d.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+              />
+            )}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    !d.video && d.cover && (
+      <section style="margin-top:44px;">
+        <div class="wrap">
+          <div class="work-cover">
+            <img src={d.cover} alt={d.title} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section" style="padding-top:8px;">
+    <div class="wrap wrap-narrow">
+      {
+        d.download && (
+          <div class="download-box">
+            <div>
+              <div class="label">下载</div>
+              <h3 class="title">{d.download.label}</h3>
+              {d.download.note && <p class="note">{d.download.note}</p>}
+            </div>
+            <a
+              class="btn btn-primary"
+              href={d.download.url}
+              target="_blank"
+              rel="noopener"
+            >
+              立即下载
+            </a>
+          </div>
+        )
+      }
+
+      {
+        d.features.length > 0 && (
+          <>
+            <h2 class="block-title" style="margin-top:0;">
+              主要功能
+            </h2>
+            <ul class="feature-list">
+              {d.features.map((f) => (
+                <li>{f}</li>
+              ))}
+            </ul>
+          </>
+        )
+      }
+
+      <div class="prose" style="margin-top:44px;">
+        <Content />
+      </div>
+
+      {
+        d.gallery.length > 0 && (
+          <div class="gallery" style="margin-top:44px;">
+            {d.gallery.map((src) => (
+              <img src={src} alt="" loading="lazy" />
+            ))}
+          </div>
+        )
+      }
+
+      {
+        d.links.length > 0 && (
+          <div class="hero-actions" style="margin-top:44px;">
+            {d.links.map((l) => (
+              <a class="btn btn-ghost" href={l.url} target="_blank" rel="noopener">
+                {l.label}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    related.length > 0 && (
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>其他作品</h2>
+            <a href="/works/">全部 →</a>
+          </div>
+          <div class="work-grid">
+            {related.map((w) => (
+              <WorkCard work={w} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Base>

@@ -1,26 +1,114 @@
 ---
 import Base from '../layouts/Base.astro';
-import PostList from '../components/PostList.astro';
+import WorkCard from '../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../site.config';
 
-const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+const works = (await getCollection('works', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+const featured = works.filter((w) => w.data.featured);
+const showcase = (featured.length ? featured : works).slice(0, 3);
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const bookmarks = (await getCollection('bookmarks'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+
+const host = (u: string) => {
+  try {
+    return new URL(u).hostname.replace(/^www\./, '');
+  } catch {
+    return u;
+  }
+};
 ---
 
 <Base>
   <section class="hero">
-    <h1>{SITE.name}</h1>
-    <p>{SITE.intro}</p>
+    <div class="wrap">
+      <span class="role">{SITE.role}</span>
+      <h1>{SITE.headline}<em>{SITE.headlineAccent}</em></h1>
+      <p class="lead">{SITE.intro}</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/works/">看看作品</a>
+        <a class="btn btn-ghost" href="/about/">关于我</a>
+      </div>
+    </div>
   </section>
 
-  <p class="section-label">最近写的</p>
-  <PostList posts={posts} limit={4} />
-  {posts.length > 4 && <a class="more-link" href="/blog/">查看全部 →</a>}
+  {
+    showcase.length > 0 && (
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>精选作品</h2>
+            <a href="/works/">全部作品 →</a>
+          </div>
+          <div class="work-grid">
+            {showcase.map((w) => (
+              <WorkCard work={w} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
-  <p class="section-label">联系</p>
-  <div class="links">
-    {SITE.social.map((s) => <a href={s.url}>{s.label}</a>)}
-  </div>
+  {
+    bookmarks.length > 0 && (
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <h2>收藏</h2>
+            <a href="/collection/">全部 →</a>
+          </div>
+          <div class="bookmark-grid">
+            {bookmarks.map((b) => (
+              <a class="bookmark" href={b.data.url} target="_blank" rel="noopener">
+                <div class="cat">{b.data.category}</div>
+                <h3 class="name">{b.data.title}</h3>
+                <p class="desc">{b.data.description}</p>
+                <span class="url">{host(b.data.url)}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section class="section">
+        <div class="wrap wrap-narrow">
+          <div class="section-head">
+            <h2>最近写的</h2>
+            <a href="/blog/">全部 →</a>
+          </div>
+          <ul class="post-list">
+            {posts.map((post) => (
+              <li class="post-item">
+                <a href={`/blog/${post.id}/`}>
+                  <span class="post-date">{fmt(post.data.date)}</span>
+                  <span>
+                    <span class="post-title">{post.data.title}</span>
+                    {post.data.description && (
+                      <span class="post-desc">{post.data.description}</span>
+                    )}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 </Base>

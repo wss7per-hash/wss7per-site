@@ -1,6 +1,8 @@
-# 个人网站
+# 个人作品站
 
-用 Astro 搭的静态站，自带网页后台（`/admin`），可以托管在任何免费平台上。
+用 Astro 搭的静态站，自带网页后台（`/admin`），用来展示和分发自己做的工具。
+
+三类内容：**作品**（APP / 插件）、**收藏**（外链资源）、**文章**。
 
 ## 本地预览
 
@@ -19,74 +21,81 @@ npm run dev
 
 ### 第 1 步：传到 GitHub
 
-先在 [github.com](https://github.com) 注册账号，然后新建一个空仓库（不要勾选 README），名字随意，比如 `my-site`。
-
-在这个文件夹里执行：
+在 [github.com](https://github.com) 注册，新建一个空仓库（不要勾选 README），然后：
 
 ```bash
-git init
-git add .
-git commit -m "初始化个人网站"
-git branch -M main
-git remote add origin https://github.com/你的用户名/my-site.git
+git remote add origin https://github.com/你的用户名/仓库名.git
 git push -u origin main
 ```
 
 ### 第 2 步：连接 Netlify
 
 1. 打开 [netlify.com](https://www.netlify.com)，用 GitHub 账号登录
-2. 点 **Add new site → Import an existing project**
-3. 选择 GitHub，授权后选中刚才的仓库
-4. 构建设置会自动读取 `netlify.toml`，直接点 **Deploy**
-5. 等 1 分钟左右，你会得到一个 `随机名字.netlify.app` 的网址
-
-这个网址现在就能访问了，而且每次 `git push` 都会自动重新部署。
+2. **Add new site → Import an existing project**，选 GitHub 和刚才的仓库
+3. 构建配置会自动读取 `netlify.toml`，直接点 **Deploy**
+4. 一分钟后得到 `随机名字.netlify.app`
 
 ### 第 3 步：打开网页后台
 
-后台需要先开启登录功能：
+1. Netlify 站点页 → **Site configuration → Identity** → **Enable Identity**
+2. 同一页 **Services → Git Gateway** → **Enable Git Gateway**
+3. 回到 Identity，**Invite users** 填自己的邮箱
+4. 邮箱里点邀请链接，设置密码（找不到就翻垃圾箱）
+5. 访问 `你的网址/admin/` 登录
 
-1. 在 Netlify 站点页进入 **Site configuration → Identity**
-2. 点 **Enable Identity**
-3. 在同一页找到 **Services → Git Gateway**，点 **Enable Git Gateway**
-4. 回到 Identity 页面，点 **Invite users**，填你自己的邮箱
-5. 去邮箱点邀请链接，设置一个密码
+登录后能管理作品、收藏和文章，图片直接拖进去上传。
 
-然后访问 `你的网址/admin/`，用刚才的邮箱密码登录，就能看到文章编辑界面了。
+## 后台怎么用
 
-> 邀请邮件可能进垃圾箱，找不到就去垃圾邮件里翻一下。
+### 添加一个作品
 
-### 后台能做什么
+后台 → 作品 → New，填这些：
 
-- 新建 / 编辑 / 删除文章
-- 上传图片（自动存到 `public/uploads/`）
-- 写 Markdown，实时预览
+| 字段 | 说明 |
+| --- | --- |
+| 标题 / 网址标识 | 网址标识用英文，决定链接，例如 `autolod` |
+| 一句话卖点 | 显示在封面下方，一行说清它是干嘛的 |
+| 分类 | APP / UE5 插件 / AE 插件 / 其他，作品列表按这个筛选 |
+| 封面图 | 横图，建议 1600×1000。不上传会自动用首字母渐变封面 |
+| 演示视频 | 填 `.mp4` 直链，或 B 站 / YouTube 的嵌入地址 |
+| 截图集 | 详情页底部的大图列表 |
+| 下载 | 下载说明 + 地址 + 备注（如 `v2.1.0 · 18.4 MB · 免费`） |
+| 功能列表 | 详情页的勾选清单 |
+| 首页推荐 | 勾上会出现在首页 |
 
-保存后会自动提交到 GitHub，Netlify 自动重新构建，一两分钟后网站上就更新了。
+**下载地址**可以填网盘链接、GitHub Releases，或者把安装包直接放进 `public/downloads/`，地址写 `/downloads/文件名.zip`。
 
-## 日常修改
+### 添加收藏
+
+后台 → 收藏 → New，填标题、链接、简介即可。适合放常用的资源站、工具、参考文档。
+
+## 改东西
 
 | 想改什么 | 改哪里 |
 | --- | --- |
-| 名字、简介、关于页、社交链接 | `src/site.config.ts` |
-| 配色、字体、间距 | `src/styles/global.css` 顶部的 `:root` |
-| 写文章 | `/admin` 后台，或直接新建 `src/content/posts/*.md` |
+| 名字、身份、首页大标题、简介、社交链接 | `src/site.config.ts` |
+| 配色、字体、圆角 | `src/styles/global.css` 顶部的 `:root` |
 | 导航菜单 | `src/layouts/Base.astro` |
+| 作品卡片样式 | `src/styles/global.css` 里的 `.work-card` 相关 |
 
-`src/site.config.ts` 是整站的开关，改完名字所有页面的标题、页脚、关于页会一起变。
+配色只有几个变量，改完整站跟着变：
+
+```css
+--bg: #08080b;      /* 背景 */
+--ink: #f4f4f7;     /* 文字 */
+--accent: #8b5cf6;  /* 强调色 1 */
+--accent-2: #22d3ee;/* 强调色 2 */
+```
+
+## 图片和视频
+
+- 图片统一放在 `public/uploads/`，后台会自动传到这里
+- 单张建议压在 2MB 以内，太大会拖慢首屏
+- 视频优先用外链（B 站 / YouTube），本地 mp4 只适合短片段
+- 安装包放 `public/downloads/`，但超过 100MB 建议走网盘
 
 ## 以后换域名
 
-等网站跑顺了，可以去买一个 `.com`（约 ¥70/年，Namecheap、Cloudflare Registrar 都可以），然后：
+买一个 `.com`（约 ¥70/年），然后在 Netlify 的 **Domain management** 里添加，按提示改 DNS。内容和后台都不用动。
 
-1. Netlify 站点 → **Domain management → Add a domain**
-2. 按提示把域名的 DNS 指过去（Netlify 会给你现成的记录）
-3. 顺便把 `astro.config.mjs` 里的 `site` 改成新域名
-
-内容和后台都不用动，换域名是无痛的。
-
-## 说明
-
-- 站点是纯静态的，没有数据库，加载快、不容易挂、也没有流量费用
-- 图片直接放进 `public/uploads/`，单张建议控制在 2MB 以内
-- 如果以后想换 Cloudflare Pages 托管，站点本身不用改，但后台需要额外配置 OAuth
+顺便把 `astro.config.mjs` 里的 `site` 改成新域名。

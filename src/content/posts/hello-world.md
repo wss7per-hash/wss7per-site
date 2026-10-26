@@ -1,5 +1,6 @@
 ---
 title: 你好，世界
+permalink: hello-world
 date: 2026-10-26
 description: 第一篇文章，也是这个网站的开始。
 ---

@@ -20,13 +20,17 @@ const fmt = (d: Date) =>
 
 <Base title={`${post.data.title} · ${SITE.name}`} description={post.data.description}>
   <article class="article">
-    <header class="article-head">
-      <h1>{post.data.title}</h1>
-      <div class="article-meta">{fmt(post.data.date)}</div>
-    </header>
-    <div class="prose">
-      <Content />
+    <div class="wrap wrap-narrow">
+      <header class="article-head">
+        <h1>{post.data.title}</h1>
+        <div class="article-meta">{fmt(post.data.date)}</div>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <a class="back" href="/blog/" style="margin-top:64px;">← 返回文章列表</a>
     </div>
-    <a class="back-link" href="/blog/">← 返回文章列表</a>
   </article>
 </Base>

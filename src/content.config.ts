@@ -11,4 +11,43 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { posts };
+const works = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/works' }),
+  schema: z.object({
+    title: z.string(),
+    tagline: z.string().default(''),
+    category: z.string().default('其他'),
+    cover: z.string().default(''),
+    video: z.string().default(''),
+    gallery: z.array(z.string()).default([]),
+    version: z.string().default(''),
+    platforms: z.array(z.string()).default([]),
+    date: z.coerce.date(),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+    download: z
+      .object({
+        label: z.string().default('下载'),
+        url: z.string(),
+        note: z.string().default(''),
+      })
+      .optional(),
+    links: z
+      .array(z.object({ label: z.string(), url: z.string() }))
+      .default([]),
+    features: z.array(z.string()).default([]),
+  }),
+});
+
+const bookmarks = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/bookmarks' }),
+  schema: z.object({
+    title: z.string(),
+    url: z.string(),
+    description: z.string().default(''),
+    category: z.string().default('资源'),
+    date: z.coerce.date(),
+  }),
+});
+
+export const collections = { posts, works, bookmarks };

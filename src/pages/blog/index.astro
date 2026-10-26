@@ -1,18 +1,45 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PostList from '../../components/PostList.astro';
 import { getCollection } from 'astro:content';
 import { SITE } from '../../site.config';
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 ---
 
 <Base title={`文章 · ${SITE.name}`}>
   <section class="page-head">
-    <h1>文章</h1>
-    <p>共 {posts.length} 篇</p>
+    <div class="wrap wrap-narrow">
+      <h1>文章</h1>
+      <p>共 {posts.length} 篇</p>
+    </div>
   </section>
-  <PostList posts={posts} />
+
+  <section class="section" style="padding-top:0;">
+    <div class="wrap wrap-narrow">
+      <ul class="post-list">
+        {
+          posts.map((post) => (
+            <li class="post-item">
+              <a href={`/blog/${post.id}/`}>
+                <span class="post-date">{fmt(post.data.date)}</span>
+                <span>
+                  <span class="post-title">{post.data.title}</span>
+                  {post.data.description && (
+                    <span class="post-desc">{post.data.description}</span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {posts.length === 0 && <p class="empty">还没有文章。</p>}
+    </div>
+  </section>
 </Base>
