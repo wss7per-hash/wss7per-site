@@ -23,14 +23,30 @@ const fmt = (x: Date) =>
   `${x.getFullYear()}.${String(x.getMonth() + 1).padStart(2, '0')}.${String(x.getDate()).padStart(2, '0')}`;
 
 const isVideoFile = /\.(mp4|webm|ogg)$/i.test(d.video);
+const hasScreens = d.screens.length > 0;
+const guide = d.links.find((l) => /指南|文档|guide|doc/i.test(l.label));
 ---
 
-<Base title={`${d.title} · ${SITE.name}`} description={d.tagline || d.title}>
-  <section class="work-hero">
+<Base
+  title={`${d.title} · ${SITE.name}`}
+  description={d.summary || d.tagline || d.title}
+>
+  <section
+    class="work-hero"
+    style={d.accent ? `--accent-local:${d.accent}` : undefined}
+  >
     <div class="wrap wrap-narrow">
       <a class="back" href="/works/">← 全部作品</a>
-      <h1>{d.title}</h1>
-      {d.tagline && <p class="tagline">{d.tagline}</p>}
+
+      <div class="work-head">
+        {d.icon && <img class="work-icon" src={d.icon} alt="" />}
+        <div>
+          <h1>{d.title}</h1>
+          {d.tagline && <p class="tagline">{d.tagline}</p>}
+        </div>
+      </div>
+
+      {d.summary && <p class="work-summary">{d.summary}</p>}
 
       <div class="meta-row">
         <span class="meta-item">分类 <b>{d.category}</b></span>
@@ -42,12 +58,34 @@ const isVideoFile = /\.(mp4|webm|ogg)$/i.test(d.video);
         }
         <span class="meta-item">更新 <b>{fmt(d.date)}</b></span>
       </div>
+
+      <div class="hero-actions">
+        {
+          d.download && (
+            <a
+              class="btn btn-primary"
+              href={d.download.url}
+              target="_blank"
+              rel="noopener"
+            >
+              {d.download.label}
+            </a>
+          )
+        }
+        {
+          guide && (
+            <a class="btn btn-ghost" href={guide.url} target="_blank" rel="noopener">
+              {guide.label}
+            </a>
+          )
+        }
+      </div>
     </div>
   </section>
 
   {
     d.video && (
-      <section style="margin-top:44px;">
+      <section style="margin-top:48px;">
         <div class="wrap">
           <div class="video-wrap">
             {isVideoFile ? (
@@ -68,7 +106,23 @@ const isVideoFile = /\.(mp4|webm|ogg)$/i.test(d.video);
   }
 
   {
-    !d.video && d.cover && (
+    !d.video && hasScreens && (
+      <section class="phone-section">
+        <div class="wrap">
+          <div class="phone-row">
+            {d.screens.map((src) => (
+              <div class="phone">
+                <img src={src} alt={`${d.title} 界面截图`} loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    !d.video && !hasScreens && d.cover && (
       <section style="margin-top:44px;">
         <div class="wrap">
           <div class="work-cover">

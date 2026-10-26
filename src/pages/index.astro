@@ -7,8 +7,9 @@ import { SITE } from '../site.config';
 const works = (await getCollection('works', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
-const featured = works.filter((w) => w.data.featured);
-const showcase = (featured.length ? featured : works).slice(0, 3);
+
+const featured = works.find((w) => w.data.featured) ?? works[0];
+const rest = works.filter((w) => w.id !== featured?.id);
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -34,7 +35,7 @@ const host = (u: string) => {
   <section class="hero">
     <div class="wrap">
       <span class="role">{SITE.role}</span>
-      <h1>{SITE.headline}<em>{SITE.headlineAccent}</em></h1>
+      <h1>{SITE.headline}<br /><em>{SITE.headlineAccent}</em></h1>
       <p class="lead">{SITE.intro}</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/works/">看看作品</a>
@@ -44,15 +45,74 @@ const host = (u: string) => {
   </section>
 
   {
-    showcase.length > 0 && (
+    featured && (
+      <section class="spotlight">
+        <div class="wrap">
+          <div class="spotlight-grid">
+            <div class="spotlight-copy">
+              <span class="spotlight-eyebrow">
+                {featured.data.category}
+                {featured.data.badge && ` · ${featured.data.badge}`}
+              </span>
+              <h2>{featured.data.title}</h2>
+              <p class="spotlight-lead">
+                {featured.data.summary || featured.data.tagline}
+              </p>
+
+              {featured.data.highlights.length > 0 && (
+                <ul class="spotlight-points">
+                  {featured.data.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+              )}
+
+              <div class="hero-actions">
+                {featured.data.download && (
+                  <a
+                    class="btn btn-primary"
+                    href={featured.data.download.url}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {featured.data.download.label}
+                  </a>
+                )}
+                <a class="btn btn-ghost" href={`/works/${featured.id}/`}>
+                  了解更多
+                </a>
+              </div>
+            </div>
+
+            <div class="spotlight-visual">
+              {featured.data.icon && (
+                <img class="spotlight-mascot" src={featured.data.icon} alt="" />
+              )}
+              {featured.data.screens.length > 0 && (
+                <div class="phone">
+                  <img
+                    src={featured.data.screens[0]}
+                    alt={`${featured.data.title} 界面截图`}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    rest.length > 0 && (
       <section class="section">
         <div class="wrap">
           <div class="section-head">
-            <h2>精选作品</h2>
+            <h2>更多作品</h2>
             <a href="/works/">全部作品 →</a>
           </div>
           <div class="work-grid">
-            {showcase.map((w) => (
+            {rest.map((w) => (
               <WorkCard work={w} />
             ))}
           </div>

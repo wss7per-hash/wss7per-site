@@ -20,8 +20,18 @@ collections:
       - { label: 标题, name: title, widget: string }
       - { label: 网址标识, name: permalink, widget: string, hint: 英文或拼音，决定网址，例如 autolod }
       - { label: 一句话卖点, name: tagline, widget: string, hint: 显示在封面下方，一行字说清它是干嘛的 }
+      - { label: 详细介绍, name: summary, widget: text, required: false, hint: 两三句话，显示在详情页标题下方和首页推荐位 }
       - { label: 分类, name: category, widget: select, options: [APP, UE5 插件, AE 插件, 其他] }
-      - { label: 封面图, name: cover, widget: image, required: false, hint: 建议 1600×1000，横图 }
+      - { label: 角标, name: badge, widget: string, required: false, hint: 显示在封面左上角，例如 公开内测 }
+      - { label: 封面图, name: cover, widget: image, required: false, hint: 横图，建议 1600×1000。手机 App 用下面的竖屏截图代替 }
+      - { label: 应用图标, name: icon, widget: image, required: false, hint: 手机 App 用，显示在标题左侧和首页推荐位 }
+      - label: 竖屏截图
+        name: screens
+        widget: list
+        required: false
+        hint: 手机 App 的截图，最多三张。详情页并排展示，也会自动成为卡片封面
+        field: { label: 图片, name: image, widget: image }
+      - { label: 强调色, name: accent, widget: string, required: false, hint: 可选，例如 #a78bfa，会影响详情页光晕颜色 }
       - { label: 演示视频, name: video, widget: string, required: false, hint: 填 mp4 直链，或 B 站 / YouTube 的嵌入地址 }
       - label: 截图集
         name: gallery
@@ -58,6 +68,12 @@ collections:
         widget: list
         required: false
         field: { label: 功能, name: feature, widget: string }
+      - label: 首页推荐要点
+        name: highlights
+        widget: list
+        required: false
+        hint: 两三条短句，显示在首页主推位
+        field: { label: 要点, name: point, widget: string }
       - { label: 详细介绍, name: body, widget: markdown }
 
   - name: bookmarks

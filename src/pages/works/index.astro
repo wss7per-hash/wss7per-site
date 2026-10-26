@@ -20,25 +20,27 @@ const categories = [
       <h1>作品</h1>
       <p>自己做的工具，都会放在这里。有问题直接找我。</p>
 
-      <div class="filters">
-        {
-          categories.map((c, i) => (
-            <button class={i === 0 ? 'filter is-active' : 'filter'} data-cat={c}>
-              {c}
-            </button>
-          ))
-        }
-      </div>
+      {
+        works.length > 1 && (
+          <div class="filters">
+            {categories.map((c, i) => (
+              <button class={i === 0 ? 'filter is-active' : 'filter'} data-cat={c}>
+                {c}
+              </button>
+            ))}
+          </div>
+        )
+      }
     </div>
   </section>
 
   <section class="section" style="padding-top:0;">
     <div class="wrap">
-      <div class="work-grid">
+      <div class={works.length === 1 ? 'work-grid work-grid--single' : 'work-grid'}>
         {
           works.map((w) => (
             <div class="work-item" data-cat={w.data.category}>
-              <WorkCard work={w} />
+              <WorkCard work={w} wide={works.length === 1} />
             </div>
           ))
         }

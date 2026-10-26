@@ -15,9 +15,14 @@ const works = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/works' }),
   schema: z.object({
     title: z.string(),
+    summary: z.string().default(''),
     tagline: z.string().default(''),
     category: z.string().default('其他'),
     cover: z.string().default(''),
+    icon: z.string().default(''),
+    screens: z.array(z.string()).default([]),
+    accent: z.string().default(''),
+    badge: z.string().default(''),
     video: z.string().default(''),
     gallery: z.array(z.string()).default([]),
     version: z.string().default(''),
@@ -36,6 +41,7 @@ const works = defineCollection({
       .array(z.object({ label: z.string(), url: z.string() }))
       .default([]),
     features: z.array(z.string()).default([]),
+    highlights: z.array(z.string()).default([]),
   }),
 });
 
