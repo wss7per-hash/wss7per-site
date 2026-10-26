@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  posts: CollectionEntry<'posts'>[];
+  limit?: number;
+}
+
+const { posts, limit } = Astro.props;
+const items = limit ? posts.slice(0, limit) : posts;
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+---
+
+<ul class="post-list">
+  {
+    items.map((post) => (
+      <li class="post-item">
+        <a href={`/blog/${post.id}/`}>
+          <span class="post-date">{fmt(post.data.date)}</span>
+          <span>
+            <span class="post-title">{post.data.title}</span>
+            {post.data.description && <span class="post-desc">{post.data.description}</span>}
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+{items.length === 0 && <p style="color:var(--ink-faint);font-size:14px;">还没有文章。</p>}

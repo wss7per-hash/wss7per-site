@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { SITE } from '../../site.config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmt = (d: Date) =>
+  `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日`;
+---
+
+<Base title={`${post.data.title} · ${SITE.name}`} description={post.data.description}>
+  <article class="article">
+    <header class="article-head">
+      <h1>{post.data.title}</h1>
+      <div class="article-meta">{fmt(post.data.date)}</div>
+    </header>
+    <div class="prose">
+      <Content />
+    </div>
+    <a class="back-link" href="/blog/">← 返回文章列表</a>
+  </article>
+</Base>

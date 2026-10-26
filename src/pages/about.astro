@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site.config';
+
+const paragraphs = SITE.about.split(/\n{2,}/).filter(Boolean);
+---
+
+<Base title={`关于 · ${SITE.name}`}>
+  <section class="page-head">
+    <h1>关于</h1>
+  </section>
+
+  <div class="prose">
+    {paragraphs.map((p) => <p>{p}</p>)}
+    <hr />
+    <p style="font-size:15px;color:var(--ink-soft);">找到我</p>
+    <div class="links">
+      {SITE.social.map((s) => <a href={s.url}>{s.label}</a>)}
+    </div>
+  </div>
+</Base>

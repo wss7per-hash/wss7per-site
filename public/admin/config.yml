@@ -1,0 +1,46 @@
+backend:
+  name: git-gateway
+  branch: main
+
+locale: zh_Hans
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    folder: src/content/posts
+    create: true
+    delete: true
+    slug: "{{fields.permalink}}"
+    preview_path: "blog/{{fields.permalink}}"
+    fields:
+      - label: 标题
+        name: title
+        widget: string
+      - label: 网址标识
+        name: permalink
+        widget: string
+        hint: 用英文或拼音，决定文章网址，例如 my-first-post
+      - label: 日期
+        name: date
+        widget: datetime
+        date_format: YYYY-MM-DD
+        time_format: false
+        format: YYYY-MM-DD
+      - label: 摘要
+        name: description
+        widget: string
+        required: false
+        hint: 一句话简介，会显示在文章列表里
+      - label: 草稿
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: 勾选后不会发布到网站上
+      - label: 正文
+        name: body
+        widget: markdown

@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../site.config';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Base>
+  <section class="hero">
+    <h1>{SITE.name}</h1>
+    <p>{SITE.intro}</p>
+  </section>
+
+  <p class="section-label">最近写的</p>
+  <PostList posts={posts} limit={4} />
+  {posts.length > 4 && <a class="more-link" href="/blog/">查看全部 →</a>}
+
+  <p class="section-label">联系</p>
+  <div class="links">
+    {SITE.social.map((s) => <a href={s.url}>{s.label}</a>)}
+  </div>
+</Base>
