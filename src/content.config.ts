@@ -42,6 +42,9 @@ const works = defineCollection({
       .default([]),
     features: z.array(z.string()).default([]),
     highlights: z.array(z.string()).default([]),
+    stats: z
+      .array(z.object({ value: z.string(), label: z.string() }))
+      .default([]),
   }),
 });
 

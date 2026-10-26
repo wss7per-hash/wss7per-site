@@ -31,7 +31,7 @@ collections:
         required: false
         hint: 手机 App 的截图，最多三张。详情页并排展示，也会自动成为卡片封面
         field: { label: 图片, name: image, widget: image }
-      - { label: 强调色, name: accent, widget: string, required: false, hint: 可选，例如 #a78bfa，会影响详情页光晕颜色 }
+      - { label: 强调色, name: accent, widget: string, required: false, hint: 可选，填十六进制色值，例如 a78bfa，会影响详情页光晕颜色 }
       - { label: 演示视频, name: video, widget: string, required: false, hint: 填 mp4 直链，或 B 站 / YouTube 的嵌入地址 }
       - label: 截图集
         name: gallery
@@ -74,6 +74,14 @@ collections:
         required: false
         hint: 两三条短句，显示在首页主推位
         field: { label: 要点, name: point, widget: string }
+      - label: 关键数字
+        name: stats
+        widget: list
+        required: false
+        hint: 三组数字，显示在详情页截图下方，例如 41.8 MB / 安装包
+        fields:
+          - { label: 数字, name: value, widget: string }
+          - { label: 说明, name: label, widget: string }
       - { label: 详细介绍, name: body, widget: markdown }
 
   - name: bookmarks

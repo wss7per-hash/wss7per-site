@@ -7,18 +7,24 @@ interface Props {
 }
 
 const { work, wide = false } = Astro.props;
-const { title, tagline, summary, category, cover, version, badge, screens, platforms } =
+const { title, tagline, summary, category, cover, version, badge, screens, platforms, icon } =
   work.data;
 
 const hasScreens = screens.length > 0;
 const strip = screens.slice(0, 3);
+const hasIconTile = !hasScreens && !cover && Boolean(icon);
 const meta = [version && `v${version}`, platforms.join(' / ')]
   .filter(Boolean)
   .join('  ·  ');
 ---
 
 <a class="work-card" href={`/works/${work.id}/`}>
-  <div class="work-media" data-cat={category} data-shot={hasScreens ? 'app' : undefined}>
+  <div
+    class="work-media"
+    data-cat={category}
+    data-shot={hasScreens ? 'app' : undefined}
+    data-icon={hasIconTile ? 'true' : undefined}
+  >
     {
       hasScreens ? (
         <div class="screens-strip">
@@ -28,6 +34,8 @@ const meta = [version && `v${version}`, platforms.join(' / ')]
         </div>
       ) : cover ? (
         <img src={cover} alt={title} loading="lazy" onerror="this.remove()" />
+      ) : hasIconTile ? (
+        <img class="icon-tile" src={icon} alt={title} loading="lazy" />
       ) : (
         <div class="placeholder">
           <span>{title.trim().charAt(0)}</span>
@@ -35,7 +43,7 @@ const meta = [version && `v${version}`, platforms.join(' / ')]
       )
     }
     {
-      !hasScreens && (badge || version) && (
+      !hasScreens && !hasIconTile && (badge || version) && (
         <span class="work-badge">{badge || `v${version}`}</span>
       )
     }
@@ -43,7 +51,9 @@ const meta = [version && `v${version}`, platforms.join(' / ')]
   <div class="work-body">
     <div class="work-cat">
       {category}
-      {hasScreens && badge && <span class="work-cat-sep"> · {badge}</span>}
+      {(hasScreens || hasIconTile) && badge && (
+        <span class="work-cat-sep"> · {badge}</span>
+      )}
     </div>
     <h3 class="work-title">{title}</h3>
     {tagline && <p class="work-tagline">{tagline}</p>}
