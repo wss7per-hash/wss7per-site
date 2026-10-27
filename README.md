@@ -82,33 +82,35 @@ npm run dev
 
 ## 部署上线
 
-全程免费，大约 15 分钟。
+全程免费。代码已经在 GitHub 上了：<https://github.com/wss7per-hash/wss7per-site>
 
-### 第 1 步：传到 GitHub
+### 第 1 步：连接 Netlify
 
-在 [github.com](https://github.com) 新建一个空仓库（不要勾选 README），然后：
+直接点这个链接，会带着仓库跳到 Netlify 的导入页：
 
-```bash
-git remote add origin https://github.com/你的用户名/仓库名.git
-git push -u origin main
-```
+<https://app.netlify.com/start/deploy?repository=https://github.com/wss7per-hash/wss7per-site>
 
-### 第 2 步：连接 Netlify
-
-1. 打开 [netlify.com](https://www.netlify.com)，用 GitHub 账号登录
-2. **Add new site → Import an existing project**，选 GitHub 和刚才的仓库
-3. 构建配置会自动读取 `netlify.toml`，直接点 **Deploy**
+1. 用 **GitHub 账号**登录（不是邮箱注册）
+2. 授权 Netlify 读取仓库
+3. 构建配置会自动读 `netlify.toml`，不要改，直接 **Deploy**
 4. 一分钟后得到 `随机名字.netlify.app`
+
+### 第 2 步：改成好记的地址
+
+**Site configuration → Change site name**，填 `wss7per`，网址就变成
+`https://wss7per.netlify.app`。
+
+（如果这个名字被占用，换一个，然后告诉我，我改 `astro.config.mjs` 里的 `site`。）
 
 ### 第 3 步：打开网页后台
 
-1. Netlify 站点页 → **Site configuration → Identity** → **Enable Identity**
+1. **Site configuration → Identity** → **Enable Identity**
 2. 同一页 **Services → Git Gateway** → **Enable Git Gateway**
 3. 回到 Identity，**Invite users** 填自己的邮箱
 4. 邮箱里点邀请链接，设置密码（找不到就翻垃圾箱）
 5. 访问 `你的网址/admin/` 登录
 
-做完这步，后台就真正可用了。
+做完这步，后台就真正可用了 —— 以后加作品、改文案都不用碰代码。
 
 ---
 
@@ -117,19 +119,24 @@ git push -u origin main
 | 想改什么 | 改哪里 |
 | --- | --- |
 | 名字、身份、首页大标题、简介、社交链接 | `src/site.config.ts` |
-| 配色、字体、圆角 | `src/styles/global.css` 顶部的 `:root` |
+| 配色、字体、间距 | `src/styles/global.css` 顶部的 `:root` |
 | 导航菜单 | `src/layouts/Base.astro` |
-| 作品卡片样式 | `src/styles/global.css` 里的 `.work-card` 相关 |
+| 首页作品长条 | `src/components/WorkRow.astro` |
+| 作品详情页结构 | `src/pages/works/[...slug].astro` |
 | 正文排版 | `src/styles/global.css` 里的 `.prose` 相关 |
 
-配色只有几个变量，改完整站跟着变：
+配色只有五个变量，改完整站跟着变：
 
 ```css
---bg: #08080b;      /* 背景 */
---ink: #f4f4f7;     /* 文字 */
---accent: #8b5cf6;  /* 强调色 1 */
---accent-2: #22d3ee;/* 强调色 2 */
+--paper: #ffffff;  /* 底色 */
+--ink:   #0a0a0a;  /* 标题与正文 */
+--ink-2: #5c5c5c;  /* 次要文字 */
+--line:  #dcdcdc;  /* 分隔细线 */
+--red:   #e23d28;  /* 唯一强调色 */
 ```
+
+这一版刻意不用圆角、不用阴影、不用渐变 —— 层次全靠字号对比和 1px 细线。
+所以换色最有效：把 `--red` 换成别的颜色，整站气质立刻变。
 
 ## 图片和视频
 
