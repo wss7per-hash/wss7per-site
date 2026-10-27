@@ -26,6 +26,11 @@ const mail = SITE.social.find((s) => s.url.startsWith('mailto:'));
 
 const works = await getCollection('works', ({ data }) => !data.draft);
 const count = String(works.length).padStart(2, '0');
+
+// 绝对地址，用于 canonical / og:url / og:image
+const origin = Astro.site ?? new URL('https://wss7per.netlify.app');
+const canonical = new URL(Astro.url.pathname, origin).href;
+const ogImage = new URL('/og.png', origin).href;
 ---
 
 <!doctype html>
@@ -35,11 +40,22 @@ const count = String(works.length).padStart(2, '0');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
     <link
       rel="preload"
       href="/fonts/inter-tight-latin.woff2"

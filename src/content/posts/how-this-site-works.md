@@ -1,6 +1,5 @@
 ---
 title: 这个网站是怎么搭的
-permalink: how-this-site-works
 date: 2026-10-20
 description: 零成本、可后台编辑、域名随时能换——整套方案的说明。
 ---
@@ -35,14 +34,16 @@ description: 一句话摘要
 
 ## 想改样式
 
-打开 `src/styles/global.css`，最上面那段是配色：
+打开 `src/styles/global.css`，最上面那段是配色，全站只有这几个值：
 
 ```css
 :root {
-  --bg: #fbfaf7;
-  --ink: #17150f;
-  --accent: #b45309;
+  --paper: #ffffff; /* 底色 */
+  --ink:   #0a0a0a; /* 正文与标题 */
+  --ink-2: #5c5c5c; /* 次要文字 */
+  --line:  #dcdcdc; /* 分隔细线 */
+  --red:   #e23d28; /* 唯一强调色 */
 }
 ```
 
-改这三个值，整站的观感就变了。
+改完这几个值，整站的观感就跟着变了。版式上刻意没有圆角、没有阴影——层次全靠字号大小和 1px 细线撑起来，所以配色一换，气质就换。

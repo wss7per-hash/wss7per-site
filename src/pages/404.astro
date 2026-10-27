@@ -1,0 +1,91 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site.config';
+---
+
+<Base title={`页面不存在 · ${SITE.name}`} description="这个地址没有对应的页面。">
+  <section class="page-head">
+    <div class="wrap">
+      <div class="page-head-row">
+        <span class="mono">Error</span>
+        <span class="mono">404 / Not Found</span>
+      </div>
+
+      <div class="err-grid">
+        <div class="err-code" aria-hidden="true">404</div>
+        <div class="err-body">
+          <h1>这个地址没有东西</h1>
+          <p>
+            页面可能被改名、挪了位置，或者链接本身敲错了。下面两个入口一定还在。
+          </p>
+          <div class="err-actions">
+            <a class="btn btn-primary" href="/">
+              回到首页
+              <svg viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path
+                  d="M2 6h8M6.5 2.5L10 6l-3.5 3.5"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="square"
+                />
+              </svg>
+            </a>
+            <a class="btn btn-ghost" href="/works/">全部作品</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .err-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+    margin-top: 44px;
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  .err-code {
+    font-family: var(--mono);
+    font-size: clamp(6rem, 15vw, 11rem);
+    font-weight: 500;
+    line-height: 0.82;
+    letter-spacing: -0.06em;
+    color: var(--red);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .err-body h1 {
+    margin: 0;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 600;
+    letter-spacing: -0.038em;
+    line-height: 1.2;
+  }
+
+  .err-body p {
+    margin: 16px 0 0;
+    max-width: 30em;
+    color: var(--ink-2);
+    font-size: 15.5px;
+    line-height: 1.75;
+  }
+
+  .err-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  @media (max-width: 860px) {
+    .err-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>
